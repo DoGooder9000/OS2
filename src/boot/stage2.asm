@@ -36,4 +36,141 @@ hang:
 
 STAGE_2_SUCCESS: db "STAGE 2 LOADED SUCCESSFULLY", ENDL, 0
 
+ProtectedModeEntry:
+	cli				; disable interrupts
+
+	lgdt [GDT_DESC]		; load GDT register with start address of Global Descriptor Table
+
+	; Enable the A20 Line
+	call EnableA20
+
+	mov eax, cr0 
+	or eax, 1		; set PE ( Protection Enable ) bit in CR0 ( Control Register 0 )
+	mov cr0, eax
+
+	; Once PE bit is set, the CPU assumes segment selectors point to GDT descriptors, not real-mode segments.
+	; Now we need to do a far jump
+	jmp dword 0x8:(STAGE2_BASE+AfterProtectedModeJump)
+
+EnableA20:
+	in al, 0x92
+	or al, 0b00000010
+	out 0x92, al
+
+	ret
+
+; GDT
+
+GDT:
+	; Entries are 8 bytes long
+	; First entry is always null
+GDT_NULL:
+	dq 0    ; The first entry is null
+			; Define a quad word ( 8 bytes )
+
+GDT_CODE_SEG_32:
+	; Size
+	dw 0xFFFF  ; Size / Limit ( max size at 4kb granularity )
+
+	; Base
+	dw 0        ; Low bits of the base / starting point
+	db 0        ; High Byte of the base
+
+	; Access Byte
+	; Present Bit, DPL ( 2 Bits ), Descriptor Type, Executable Bit, Direction/Conforming Bit, Readable/Writable, Accessed Bit
+	db 0b10011010
+	
+	; Flags plus the rest of the limit
+	; Granularity Flag, Size Flag, Long-Mode Code Flag + the rest of the Limit
+	db 0b1100_1111
+
+	; Highest Byte of the Base
+	db 0
+
+GDT_DATA_SEG_32:
+	; Size
+	dw 0xFFFF  ; Size / Limit ( max size at 4kb granularity )
+
+	; Base
+	dw 0        ; Low bits of the base / starting point
+	db 0        ; High Byte of the base
+
+	; Access Byte
+	; Present Bit, DPL ( 2 Bits ), Descriptor Type, Executable Bit, Direction/Conforming Bit, Readable/Writable, Accessed Bit
+	db 0b10010010
+	
+	; Flags plus the rest of the limit
+	; Granularity Flag, Size Flag, Long-Mode Code Flag + the rest of the Limit
+	db 0b1100_1111
+
+	; Highest Byte of the Base
+	db 0
+
+GDT_CODE_SEG_16:
+	; Size
+	dw 0xFFFF  ; Size / Limit ( max size at 4kb granularity )
+
+	; Base
+	dw 0        ; Low bits of the base / starting point
+	db 0        ; High Byte of the base
+
+	; Access Byte
+	; Present Bit, DPL ( 2 Bits ), Descriptor Type, Executable Bit, Direction/Conforming Bit, Readable/Writable, Accessed Bit
+	db 0b10011010
+	
+	; Flags plus the rest of the limit
+	; Granularity Flag, Size Flag, Long-Mode Code Flag + the rest of the Limit
+	db 0b0000_1111
+
+	; Highest Byte of the Base
+	db 0
+
+GDT_DATA_SEG_16:
+	; Size
+	dw 0xFFFF  ; Size / Limit ( max size at 4kb granularity )
+
+	; Base
+	dw 0        ; Low bits of the base / starting point
+	db 0        ; High Byte of the base
+
+	; Access Byte
+	; Present Bit, DPL ( 2 Bits ), Descriptor Type, Executable Bit, Direction/Conforming Bit, Readable/Writable, Accessed Bit
+	db 0b10010010
+	
+	; Flags plus the rest of the limit
+	; Granularity Flag, Size Flag, Long-Mode Code Flag + the rest of the Limit
+	db 0b0000_1111
+
+	; Highest Byte of the Base
+	db 0
+
+GDT_DESC:
+	dw GDT_DESC - GDT - 1
+	dd (GDT+STAGE2_BASE)
+
+
+bits 32
+AfterProtectedModeJump:
+	; We can't turn on interrupts until we have an IDT
+
+	; We need to set all the segment registers to their proper values
+	mov ax, 0x10
+	mov ds, ax
+	mov es, ax
+	mov fs, ax
+	mov gs, ax
+	mov ss, ax
+
+	; The stack pointer is probably fine where it is
+
+	; We need to load the Kernel now
+	; Get FAT working? No more interrupts until an IDT
+	jmp 0x8:KERNEL_ADDRESS
+
+	jmp hang	; Shouldn't get here if Kernel Jump is Successful
+
+
+KERNEL_ADDRESS	equ 0x18000
+STAGE2_BASE		equ 0x0000
+
 times 1024 - ($-$$) db 0
