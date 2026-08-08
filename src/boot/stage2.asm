@@ -31,6 +31,8 @@ print: ; Put the address of the line in SI
 	ret		; Return
 
 main:
+	mov [DRIVE_NUM], dl
+
 	mov si, STAGE_2_SUCCESS
 	call print
 

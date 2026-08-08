@@ -79,6 +79,10 @@ main:
 
 	call ReadStage2
 
+	; Pass some info for stage 2
+
+	mov dl, [DRIVE_NUM]
+
 	jmp STAGE2_SEGMENT:STAGE2_OFFSET
 
 	jmp hang
