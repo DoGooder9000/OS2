@@ -7,7 +7,7 @@ ASM := nasm
 CC := gcc
 LD := ld
 
-CC_FLAGS := -m32 -ffreestanding -fno-pie -fno-stack-protector
+CC_FLAGS := -m32 -masm=intel -ffreestanding -fno-pie -fno-stack-protector
 LD_FLAGS := -m elf_i386 --oformat binary
 
 KERNEL_C_FILES := $(wildcard $(KERNEL)/*.c)
@@ -19,6 +19,10 @@ build: $(BUILD)/boot.bin
 
 $(BUILD)/boot.bin: $(BUILD)/bootloader.bin $(BUILD)/kernel.bin
 	cat $^ > $@
+
+	ls -l build/bootloader.bin
+	ls -l build/kernel.bin
+	ls -l build/boot.bin
 
 #----------------------------#
 
@@ -35,15 +39,19 @@ $(BUILD)/stage2.bin: $(BOOT)/stage2.asm
 
 #----------------------------#
 
-$(BUILD)/kernel.bin: $(BUILD)/kernel_entry.o $(BUILD)/idt_asm.o $(KERNEL)/linker.ld $(KERNEL_OBJS)
+$(BUILD)/kernel.bin: $(BUILD)/kernel_entry.o $(BUILD)/idt_asm.o $(BUILD)/int_func_asm.o $(KERNEL)/linker.ld $(KERNEL_OBJS)
 	mkdir -p $(BUILD)
-	$(LD) $(LD_FLAGS) -T $(KERNEL)/linker.ld -o $@ $(BUILD)/kernel_entry.o $(BUILD)/idt_asm.o $(KERNEL_OBJS)
+	$(LD) $(LD_FLAGS) -T $(KERNEL)/linker.ld -o $@ $(BUILD)/kernel_entry.o $(BUILD)/idt_asm.o $(BUILD)/int_func_asm.o $(KERNEL_OBJS)
 
 $(BUILD)/kernel_entry.o: $(KERNEL)/kernel_entry.asm
 	mkdir -p $(BUILD)
 	$(ASM) -f elf32 -o $@ $<
 
 $(BUILD)/idt_asm.o: $(KERNEL)/idt_asm.asm
+	mkdir -p $(BUILD)
+	$(ASM) -f elf32 -o $@ $<
+
+$(BUILD)/int_func_asm.o: $(KERNEL)/int_func_asm.asm
 	mkdir -p $(BUILD)
 	$(ASM) -f elf32 -o $@ $<
 

@@ -3,10 +3,17 @@
 volatile BYTE* VidMemAddr = (volatile BYTE*) VIDEO_MEMORY;
 
 void PrintChar(char c, BYTE color, int* cursor){
-	VidMemAddr[(*cursor)*2] = c;
-	VidMemAddr[(*cursor)*2+1] = color;
+	if (c == '\n'){
+		*cursor += CHAR_PER_LINE;
+		*cursor -= (*cursor) % CHAR_PER_LINE;
+	}
 
-	*cursor += 1;
+	else {
+		VidMemAddr[(*cursor)*2] = c;
+		VidMemAddr[(*cursor)*2+1] = color;
+
+		*cursor += 1;
+	}
 }
 
 void Print(char* string, BYTE color, int* cursor){

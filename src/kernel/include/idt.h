@@ -23,3 +23,4 @@ static idtr_t idtr;
 void idt_set_descriptor(uint8_t vector, void* isr, uint8_t flags);
 void exception_handler();
 void idt_init(void);
+void InitInterrupts();
