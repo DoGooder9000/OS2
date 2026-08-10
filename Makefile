@@ -35,11 +35,15 @@ $(BUILD)/stage2.bin: $(BOOT)/stage2.asm
 
 #----------------------------#
 
-$(BUILD)/kernel.bin: $(BUILD)/kernel_entry.o $(KERNEL)/linker.ld $(KERNEL_OBJS)
+$(BUILD)/kernel.bin: $(BUILD)/kernel_entry.o $(BUILD)/idt_asm.o $(KERNEL)/linker.ld $(KERNEL_OBJS)
 	mkdir -p $(BUILD)
-	$(LD) $(LD_FLAGS) -T $(KERNEL)/linker.ld -o $@ $(BUILD)/kernel_entry.o $(KERNEL_OBJS)
+	$(LD) $(LD_FLAGS) -T $(KERNEL)/linker.ld -o $@ $(BUILD)/kernel_entry.o $(BUILD)/idt_asm.o $(KERNEL_OBJS)
 
 $(BUILD)/kernel_entry.o: $(KERNEL)/kernel_entry.asm
+	mkdir -p $(BUILD)
+	$(ASM) -f elf32 -o $@ $<
+
+$(BUILD)/idt_asm.o: $(KERNEL)/idt_asm.asm
 	mkdir -p $(BUILD)
 	$(ASM) -f elf32 -o $@ $<
 
@@ -58,3 +62,8 @@ run: $(BUILD)/boot.bin
 
 clean:
 	rm -rf build
+
+cleanrun:
+	make clean
+	wsl make build
+	make run

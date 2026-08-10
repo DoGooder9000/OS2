@@ -15,9 +15,10 @@ void Print(char* string, BYTE color, int* cursor){
 	}
 }
 
-void ClearScreen(){
+void ClearScreen(int* cursor){
 	for(int i = 0; i < CHAR_PER_LINE * LINES * 2; i += 2){
 		VidMemAddr[i] = ' '; // Set character to space
 		VidMemAddr[i + 1] = BLACKONBLACK; // Set attribute byte
 	}
+	*cursor = 0;
 }
