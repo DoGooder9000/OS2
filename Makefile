@@ -19,6 +19,7 @@ build: $(BUILD)/boot.bin
 
 $(BUILD)/boot.bin: $(BUILD)/bootloader.bin $(BUILD)/kernel.bin
 	cat $^ > $@
+	truncate -s 1M $@
 
 	ls -l build/bootloader.bin
 	ls -l build/kernel.bin
@@ -39,9 +40,9 @@ $(BUILD)/stage2.bin: $(BOOT)/stage2.asm
 
 #----------------------------#
 
-$(BUILD)/kernel.bin: $(BUILD)/kernel_entry.o $(BUILD)/idt_asm.o $(BUILD)/int_func_asm.o $(KERNEL)/linker.ld $(KERNEL_OBJS)
+$(BUILD)/kernel.bin: $(BUILD)/kernel_entry.o $(BUILD)/idt_asm.o $(BUILD)/int_func_asm.o $(BUILD)/drive_func_asm.o $(KERNEL)/linker.ld $(KERNEL_OBJS)
 	mkdir -p $(BUILD)
-	$(LD) $(LD_FLAGS) -T $(KERNEL)/linker.ld -o $@ $(BUILD)/kernel_entry.o $(BUILD)/idt_asm.o $(BUILD)/int_func_asm.o $(KERNEL_OBJS)
+	$(LD) $(LD_FLAGS) -T $(KERNEL)/linker.ld -o $@ $(BUILD)/kernel_entry.o $(BUILD)/idt_asm.o $(BUILD)/int_func_asm.o $(BUILD)/drive_func_asm.o $(KERNEL_OBJS)
 
 $(BUILD)/kernel_entry.o: $(KERNEL)/kernel_entry.asm
 	mkdir -p $(BUILD)
@@ -52,6 +53,10 @@ $(BUILD)/idt_asm.o: $(KERNEL)/idt_asm.asm
 	$(ASM) -f elf32 -o $@ $<
 
 $(BUILD)/int_func_asm.o: $(KERNEL)/int_func_asm.asm
+	mkdir -p $(BUILD)
+	$(ASM) -f elf32 -o $@ $<
+
+$(BUILD)/drive_func_asm.o: $(KERNEL)/drive_func_asm.asm
 	mkdir -p $(BUILD)
 	$(ASM) -f elf32 -o $@ $<
 

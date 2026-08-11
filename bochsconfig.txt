@@ -1,0 +1,21 @@
+megs: 32
+
+cpu: count=1, ips=1000000
+
+romimage: file="C:\Program Files\Bochs-3.0\BIOS-bochs-latest"
+vgaromimage: file="C:\Program Files\Bochs-3.0\VGABIOS-lgpl-latest.bin"
+
+boot: disk
+
+ata0-master: type=disk, path="build/boot.bin", mode=flat
+
+display_library: options="gui_debug"
+
+log: bochs.log
+
+panic: action=ask
+error: action=report
+info: action=report
+debug: action=report
+
+magic_break: enabled=1

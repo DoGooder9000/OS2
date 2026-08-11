@@ -18,6 +18,7 @@ void exception_handler() {			// Only for cpu given exceptions
 
 extern void PIT_Interrupt();
 extern void Keyboard_Interrupt();
+extern void ATA_Interrupt_Primary();
 
 
 static bool vectors[IDT_MAX_DESCRIPTORS];
@@ -40,6 +41,9 @@ void idt_init() {
 	// Keyboard interrupt #33
 	idt_set_descriptor(33, Keyboard_Interrupt, 0x8E);
 	vectors[33] = true;
+
+	idt_set_descriptor(46, ATA_Interrupt_Primary, 0x8E);
+	vectors[46] = true;
 
 
 	__asm__ volatile ("lidt %0" : : "m"(idtr)); // load the new IDT

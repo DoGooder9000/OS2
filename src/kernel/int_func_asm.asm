@@ -1,3 +1,5 @@
+bits 32
+
 %define PIC1 0x20
 %define PIC2 0xA0
 %define PICEOI 0x20
@@ -6,6 +8,12 @@
 pusha
 mov al, PICEOI
 out PIC1, al
+popa
+%endmacro
+%macro SendPIC2EOI 0
+pusha
+mov al, PICEOI
+out PIC2, al
 popa
 %endmacro
 
@@ -31,6 +39,16 @@ Keyboard_Interrupt:
 	add esp, 4
 
 	SendPICEOI
+
+	popa
+	iretd
+
+global ATA_Interrupt_Primary
+ATA_Interrupt_Primary:
+	pusha
+
+	SendPICEOI
+	SendPIC2EOI
 
 	popa
 	iretd

@@ -1,4 +1,5 @@
 #pragma once
+#include "datatype.h"
 
 #define VIDEO_MEMORY 0xB8000
 #define CHAR_PER_LINE 80
@@ -14,3 +15,5 @@ extern volatile BYTE* VidMemAddr;
 void PrintChar(char c, BYTE color, int* cursor);
 void Print(char* string, BYTE color, int* cursor);
 void ClearScreen();
+void PrintHexChar(uint8_t byte, uint8_t color, int* cursor);
+void PrintBufferHex(uint8_t* buffer, int bytes, uint8_t color, int* cursor);

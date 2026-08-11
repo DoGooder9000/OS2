@@ -1,0 +1,1 @@
+"C:\Program Files\Bochs-3.0\bochs.exe" -f bochsconfig.txt -debugger
