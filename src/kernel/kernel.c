@@ -10,6 +10,7 @@
 int cursor = 0;
 
 uint8_t buffer[512];
+uint8_t* boot_ptr = (uint8_t*) 0x7C00;
 
 int init(){
 	InitInterrupts();
@@ -23,7 +24,9 @@ int main() {
 
 	Print("Loading...\n", BLACKONWHITE, &cursor);
 
-	ata_lba_read(0, 1, buffer);
+	ata_lba_write(20, 1, boot_ptr);
+
+	ata_lba_read(20, 1, buffer);
 	PrintBufferHex(buffer, 32, BLACKONWHITE, &cursor);
 	
 	PrintHexChar(buffer[0], BLACKONWHITE, &cursor);

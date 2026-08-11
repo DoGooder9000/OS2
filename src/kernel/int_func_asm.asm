@@ -52,3 +52,13 @@ ATA_Interrupt_Primary:
 
 	popa
 	iretd
+
+global ATA_Interrupt_Secondary
+ATA_Interrupt_Secondary:
+	pusha
+
+	SendPICEOI
+	SendPIC2EOI
+
+	popa
+	iretd
