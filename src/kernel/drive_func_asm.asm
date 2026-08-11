@@ -74,7 +74,7 @@ ata_lba_read_asm:
 	dec bl
 
 	; Delay to clear status registers
-	call Delay400
+	;call Delay400
 
 	jmp .ata_lba_read_ready
 
@@ -167,12 +167,12 @@ ata_lba_write_asm:
 	dec bl
 
 	; Cache flush after each write command completes
-	;mov edx, 0x1F7
-	;mov eax, 0xE7
-	;out dx, al
+	mov edx, 0x1F7
+	mov eax, 0xE7
+	out dx, al
 
 	; Delay to clear status registers
-	call Delay400
+	;call Delay400
 
 	jmp .ata_lba_write_ready
 
@@ -181,6 +181,8 @@ ata_lba_write_asm:
 	popfd
 
 	ret
+
+; Helper funcs
 
 Delay400:
 	pusha

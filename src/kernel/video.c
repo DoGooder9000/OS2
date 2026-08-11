@@ -37,8 +37,11 @@ void PrintHexChar(uint8_t byte, uint8_t color, int* cursor){
 	PrintChar(DecimalToHex[byte&0xF], color, cursor);
 }
 
-void PrintBufferHex(uint8_t* buffer, int bytes, uint8_t color, int* cursor){
+void PrintBufferHex(uint8_t* buffer, int bytes, int width, uint8_t color, int* cursor){
 	for (int i = 0; i < bytes; i++) {
+		if (((i%width) == 0) && (i != 0)){
+			PrintChar('\n', BLACKONWHITE, cursor);
+		}
 		PrintHexChar(buffer[i], color, cursor);
 		PrintChar(' ', color, cursor);
 	}

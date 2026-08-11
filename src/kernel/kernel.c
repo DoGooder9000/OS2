@@ -27,9 +27,7 @@ int main() {
 	ata_lba_write(20, 1, boot_ptr);
 
 	ata_lba_read(20, 1, buffer);
-	PrintBufferHex(buffer, 32, BLACKONWHITE, &cursor);
-	
-	PrintHexChar(buffer[0], BLACKONWHITE, &cursor);
+	PrintBufferHex(buffer, 512, 25, BLACKONWHITE, &cursor);
 
 	char c;
 	while (true){
