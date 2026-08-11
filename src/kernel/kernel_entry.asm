@@ -1,10 +1,11 @@
 bits 32
 
-global start
+section .text.entry
+global kernel_entry
 
 extern main
 
-start:
+kernel_entry:
 	call main
 
 hang:
