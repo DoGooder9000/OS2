@@ -41,3 +41,196 @@ void PIC_Remap(int offset1, int offset2) {
 	outb(PIC1_DATA, 0);
 	outb(PIC2_DATA, 0);
 }
+
+void Keyboard_Interrupt_C(uint8_t scancode){
+	char c;
+
+	/* Scancode set 2
+	switch (scancode){
+		case (0x1C): // A
+		c = 'a';
+		break;
+		case (0x32): // B
+		c = 'b';
+		break;
+		case (0x21): // C
+			c = 'c';
+			break;
+		case (0x23): // D
+			c = 'd';
+			break;
+		case (0x24): // E
+			c = 'e';
+			break;
+		case (0x2B): // F
+			c = 'f';
+			break;
+		case (0x34): // G
+			c = 'g';
+			break;
+		case (0x33): // H
+			c = 'h';
+			break;
+		case (0x43): // I
+			c = 'i';
+			break;
+		case (0x3B): // J
+			c = 'j';
+			break;
+		case (0x42): // K
+			c = 'k';
+			break;
+		case (0x4B): // L
+			c = 'l';
+			break;
+		case (0x3A): // M
+			c = 'm';
+			break;
+		case (0x31): // N
+			c = 'n';
+			break;
+		case (0x44): // O
+			c = 'o';
+			break;
+		case (0x4D): // P
+			c = 'p';
+			break;
+		case (0x15): // Q
+			c = 'q';
+			break;
+		case (0x2D): // R
+			c = 'r';
+			break;
+		case (0x1B): // S
+			c = 's';
+			break;
+		case (0x2C): // T
+			c = 't';
+			break;
+		case (0x3C): // U
+			c = 'u';
+			break;
+		case (0x2A): // V
+			c = 'v';
+			break;
+		case (0x1D): // W
+			c = 'w';
+			break;
+		case (0x22): // X
+			c = 'x';
+			break;
+		case (0x35): // Y
+			c = 'y';
+			break;
+		case (0x1A): // Z
+			c = 'z';
+			break;
+
+		default:
+			c = 0;
+			break;
+	}
+	*/
+
+	switch (scancode) { // Scancode set 1. All other sets are automatically translated for backwards compatibility
+		case 0x1E:
+			c = 'a';
+			break;
+		case 0x30:
+			c = 'b';
+			break;
+		case 0x2E:
+			c = 'c';
+			break;
+		case 0x20:
+			c = 'd';
+			break;
+		case 0x12:
+			c = 'e';
+			break;
+		case 0x21:
+			c = 'f';
+			break;
+		case 0x22:
+			c = 'g';
+			break;
+		case 0x23:
+			c = 'h';
+			break;
+		case 0x17:
+			c = 'i';
+			break;
+		case 0x24:
+			c = 'j';
+			break;
+		case 0x25:
+			c = 'k';
+			break;
+		case 0x26:
+			c = 'l';
+			break;
+		case 0x32:
+			c = 'm';
+			break;
+		case 0x31:
+			c = 'n';
+			break;
+		case 0x18:
+			c = 'o';
+			break;
+		case 0x19:
+			c = 'p';
+			break;
+		case 0x10:
+			c = 'q';
+			break;
+		case 0x13:
+			c = 'r';
+			break;
+		case 0x1F:
+			c = 's';
+			break;
+		case 0x14:
+			c = 't';
+			break;
+		case 0x16:
+			c = 'u';
+			break;
+		case 0x2F:
+			c = 'v';
+			break;
+		case 0x11:
+			c = 'w';
+			break;
+		case 0x2D:
+			c = 'x';
+			break;
+		case 0x15:
+			c = 'y';
+			break;
+		case 0x2C:
+			c = 'z';
+			break;
+
+		case 0x1C:
+			c = '\n'; // 0x0A Linefeed
+			break;
+		case 0x0E:
+			c = 0x8; // Backspace
+			break;
+		case 0x39:
+			c = ' '; // Space
+			break;
+
+		default:
+			c = 0;
+			break;
+	}
+
+	if (c != 0 && STDIN_ptr < 256){
+		STDIN[STDIN_ptr] = c;
+		STDIN_ptr++;
+	}
+
+	return;
+}

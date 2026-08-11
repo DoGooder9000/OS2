@@ -17,7 +17,25 @@ int init(){
 int main() {
 	init();
 
-	Print("Loading...", BLACKONWHITE, &cursor);
+	Print("Loading...\n", BLACKONWHITE, &cursor);
+
+	char c;
+	while (true){
+		if (STDIN_ptr != 0){
+			c = GetChar();
+
+			if (c == 0x08) { // Backspace
+				if (cursor != 0) {
+					cursor--;
+					PrintChar(' ', BLACKONBLACK, &cursor);
+					cursor--;
+				}
+			}
+			else {
+				PrintChar(c, BLACKONWHITE, &cursor);
+			}
+		}
+	}
 
 
 	return 0;

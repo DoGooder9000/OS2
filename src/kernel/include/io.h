@@ -1,6 +1,9 @@
 #pragma once
 #include "datatype.h"
 
+extern char STDIN[256];
+extern uint8_t STDIN_ptr;
+
 static inline void outb(uint16_t port, uint8_t value) {
     asm volatile (
         "out dx, al"
@@ -24,6 +27,8 @@ static inline uint8_t inb(uint16_t port) {
 static inline void io_wait(void) {
     outb(0x80, 0);
 }
+
+char GetChar();
 
 void KeyboardWaitToSendInput();
 

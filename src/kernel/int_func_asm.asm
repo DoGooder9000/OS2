@@ -18,9 +18,17 @@ PIT_Interrupt:
 	popa
 	iretd
 
+extern Keyboard_Interrupt_C
 global Keyboard_Interrupt
 Keyboard_Interrupt:
 	pusha
+
+	xor eax, eax
+	in al, 0x60
+
+	push eax
+	call Keyboard_Interrupt_C
+	add esp, 4
 
 	SendPICEOI
 
